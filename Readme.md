@@ -5,4 +5,5 @@ site and display them.
 The input file id `"prefs.js" located in Mozilla's profile directory
 
 ## Require 
-SQLite3 library
+*SQLite3 library
+*PhantomJS (external program) to grab the thumbnails
