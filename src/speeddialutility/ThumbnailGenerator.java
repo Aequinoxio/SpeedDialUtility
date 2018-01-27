@@ -105,8 +105,6 @@ public class ThumbnailGenerator {
                 file_temp.delete();
                 System.out.println("DONE");
             }
-
         }
     }
-
 }
