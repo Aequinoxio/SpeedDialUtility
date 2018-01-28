@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package speeddialutility;
+package it.aequinoxio.speeddialutility;
 
+import Utilities.CustomPreferences;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,12 +26,12 @@ import java.util.regex.Pattern;
  */
 public class SpeedDialUtility {
 
-   // Constants constantValues = Constants.getInstance();
+    // Constants constantValues = Constants.getInstance();
     //String pattern="\\((\\\".*?-\\d+)-(.*)\\\",(.*)\\)";S
     String regexPattern = "\\((\\\"extensions.speeddial.thumbnail-)(\\d+)-(.*)\\\",(.*)\\)";
     String regexpGroupPattern = "\\((\\\"extensions.speeddial.group-)(\\d+)-(.*)\\\",(.*)\\)";
 
-    static String fileName = "D:\\Mozilla_profiles\\Profiles\\y10v7eee.default-1493351350206\\prefs - Copia del 20171118.js";
+    final static String fileName = "D:\\Mozilla_profiles\\Profiles\\y10v7eee.default-1493351350206\\prefs - Copia del 20171118.js";
 
     Map<Integer, SpeedDialData> DB;
     Map<Integer, String> DBLABEL;
@@ -46,12 +47,37 @@ public class SpeedDialUtility {
      */
     // TODO: parametrizzare il path per il file pref.js
     // TODO: salvare il thumbnail
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
         SpeedDialUtility speedDialUtility = new SpeedDialUtility();
-        speedDialUtility.readFromFile(fileName);
+        speedDialUtility.startImport(fileName);
+//        SpeedDialUtility speedDialUtility = new SpeedDialUtility();
+//        speedDialUtility.readFromFile(fileName);
+//        try {
+//            speedDialUtility.printDB();
+//        } catch (SQLException | ClassNotFoundException ex) {
+//            Logger.getLogger(SpeedDialUtility.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//        ThumbnailGenerator thumbnailGenerator;
+//        try {
+//            thumbnailGenerator = new ThumbnailGenerator(
+//                    "C:\\PortableApps\\phantomjs-2.1.1-windows",
+//                    Constants.DBPath,
+//                    Constants.phantomJSViewport,
+//                    "d:\\temp\\ttt.png"
+//            );
+//            thumbnailGenerator.grabAllThumbnail();
+//            thumbnailGenerator.closeDBConnection();
+//        } catch (ClassNotFoundException | SQLException | IOException | InterruptedException ex) {
+//            Logger.getLogger(SpeedDialUtility.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+    }
+
+    public void startImport(String SDFilename) throws ClassNotFoundException, SQLException {
+        initializeDB();
+        readFromFile(SDFilename);
         try {
-            speedDialUtility.printDB();
+            updateSpeedDialDB();
         } catch (SQLException | ClassNotFoundException ex) {
             Logger.getLogger(SpeedDialUtility.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -59,10 +85,10 @@ public class SpeedDialUtility {
         ThumbnailGenerator thumbnailGenerator;
         try {
             thumbnailGenerator = new ThumbnailGenerator(
-                    "C:\\PortableApps\\phantomjs-2.1.1-windows",
-                    Constants.DBPath,
-                    Constants.phantomJSViewport,
-                    "d:\\temp\\ttt.png"
+                    null, //CustomPreferences.getInstance().getPhantomJSPath(), //"C:\\PortableApps\\phantomjs-2.1.1-windows",
+                    null, //Constants.DBPath,
+                    null, //Constants.phantomJSViewport,
+                    null //"d:\\temp\\ttt.png"
             );
             thumbnailGenerator.grabAllThumbnail();
             thumbnailGenerator.closeDBConnection();
@@ -87,10 +113,13 @@ public class SpeedDialUtility {
     }
 
     /**
-     * Print the DB of parsed speeddial urls and groups
+     * Update the DB of parsed speeddial urls and groups.
+     *
+     * @throws java.sql.SQLException
+     * @throws java.lang.ClassNotFoundException
      */
-    public void printDB() throws SQLException, ClassNotFoundException {
-        SQLliteUtils sqlLiteUtils = new SQLliteUtils(Constants.DBPath);
+    private void updateSpeedDialDB() throws SQLException, ClassNotFoundException {
+        SQLliteUtils sqlLiteUtils = new SQLliteUtils(CustomPreferences.getInstance().getDBPath());
         //sqlLiteUtils.startDBConnection("C:\\PortableApps\\SQLiteDatabaseBrowserPortable\\Data\\speeddial.db");
         System.out.println("Total keys:" + DB.size());
 //        for (Integer key : DB.keySet()) {
@@ -124,11 +153,22 @@ public class SpeedDialUtility {
     }
 
     /**
-     * Read the speeddials prefs.js
-     *
-     * @param fileName The filename to be read
+     * Reset the SpeedDial Database recreating the empty tables
+     * @throws ClassNotFoundException
+     * @throws SQLException 
      */
-    public void readFromFile(String fileName) {
+    private void initializeDB() throws ClassNotFoundException, SQLException{
+        SQLliteUtils sqlLiteUtils = new SQLliteUtils(CustomPreferences.getInstance().getDBPath());
+        sqlLiteUtils.resetDB();         
+        sqlLiteUtils.closeDBConnection();
+    }
+    
+    /**
+     * Read the speeddials prefs.js and generate a local DB that be imported with updateSpeedDialDB method
+     *
+     * @param fileName The filename of the SpeedDial data to be read
+     */
+    private void readFromFile(String fileName) {
         Pattern p = Pattern.compile(regexPattern, Pattern.CASE_INSENSITIVE);
         Pattern pGroup = Pattern.compile(regexpGroupPattern, Pattern.CASE_INSENSITIVE);
         Matcher m;

@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package speeddialutility;
+package it.aequinoxio.speeddialutility;
 
+import Utilities.CustomPreferences;
+import Utilities.Constants;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,15 +46,16 @@ public class ThumbnailGenerator {
      * @throws ClassNotFoundException
      * @throws SQLException
      */
-    public ThumbnailGenerator(String phantomJSDir, String speddialDBPath, String rasterizeImageParam, String tempFilePath) throws ClassNotFoundException, SQLException {
-        //sqlLiteUtils.startDBConnection("C:\\PortableApps\\SQLiteDatabaseBrowserPortable\\Data\\speeddial.db");
-        sqlLiteUtils = new SQLliteUtils(Constants.DBPath);
-        //sqlLiteUtils.startDBConnection(speddialDBPath);
+    public ThumbnailGenerator(String phantomJSPath, String speddialDBPath, String rasterizeImageParam, String tempFilePath) throws ClassNotFoundException, SQLException {
+        // TODO: Eliminare i parametri visto che utilizzo le preferences per la configurazione della classe
+//sqlLiteUtils.startDBConnection("C:\\PortableApps\\SQLiteDatabaseBrowserPortable\\Data\\speeddial.db");
+        CustomPreferences customPreferences = CustomPreferences.getInstance();
+        sqlLiteUtils = new SQLliteUtils(customPreferences.getDBPath());
         
-        LAUNCH_LIST.set(0,phantomJSDir+Constants.phantomJSExe);
-        LAUNCH_LIST.set(1,phantomJSDir+Constants.phantomJSScript);
-        LAUNCH_LIST.set(3,tempFilePath);
-        LAUNCH_LIST.set(4,rasterizeImageParam);
+        LAUNCH_LIST.set(0,customPreferences.getPhantomJSPath());
+        LAUNCH_LIST.set(1,customPreferences.getPhantomJSScriptPath());
+        LAUNCH_LIST.set(3,customPreferences.getTempFileAbsolutePath());
+        LAUNCH_LIST.set(4,customPreferences.getViewPort());
     }
     
     /**
@@ -64,12 +67,13 @@ public class ThumbnailGenerator {
     }
 
     /**
-     *
+     * Recupera tutte le url dal file pref.js e scarica le immagini. 
      * @throws SQLException
      * @throws IOException
      * @throws InterruptedException
      */
     public void grabAllThumbnail() throws SQLException, IOException, InterruptedException {
+        
         ResultSet rs = sqlLiteUtils.readSites();
 
         int counter = 0;
@@ -102,8 +106,11 @@ public class ThumbnailGenerator {
                 // Aggiorno il DB
                 sqlLiteUtils.updateImageDB(url, LAUNCH_LIST.get(3));
                 File file_temp = new File(LAUNCH_LIST.get(3));
-                file_temp.delete();
-                System.out.println("DONE");
+                if (file_temp.delete()){
+                    System.out.println("DONE");
+                } else {
+                    System.out.println("ERROR");
+                }
             }
         }
     }

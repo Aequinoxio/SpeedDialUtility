@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package speeddialutility;
+package DUMMY_TODEL;
 
+import Utilities.CustomPreferences;
+import it.aequinoxio.speeddialutility.SQLliteUtils;
 import java.awt.Image;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -38,7 +40,7 @@ public class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() throws ClassNotFoundException, SQLException {
         try {
-            this.sqlu = new SQLliteUtils(Constants.DBPath);
+            this.sqlu = new SQLliteUtils(CustomPreferences.getInstance().getDBPath());
         } catch (SQLException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -76,9 +78,7 @@ public class MainFrame extends javax.swing.JFrame {
                             lblImage.setIcon(null);
                         }
                         lblImage.revalidate();
-                    } catch (SQLException ex) {
-                        Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (IOException ex) {
+                    } catch (SQLException | IOException ex) {
                         Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -164,6 +164,7 @@ public class MainFrame extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 try {
                     new MainFrame().setVisible(true);

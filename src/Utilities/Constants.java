@@ -3,18 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package speeddialutility;
+package Utilities;
 
 /**
  *
  * @author utente
  */
 public class Constants {
-
-    public static final String DBPath = "C:\\PortableApps\\SQLiteDatabaseBrowserPortable\\Data\\speeddial.db";
-    public static final String phantomJSExe = "\\bin\\phantomjs.exe";
-    public static final String phantomJSScript = "\\examples\\rasterize.js";
-    public static final String phantomJSViewport = "1024px*678px";
+    // Variabili accedibili solo dal package
+    static final String PrefPath="it.aequinoxio.speeddialutility";
+    static final String DBPath = "C:\\PortableApps\\SQLiteDatabaseBrowserPortable\\Data\\speeddial.db";    
+    static final String phantomJSDir = "C:\\PortableApps\\phantomjs-2.1.1-windows";
+    static final String phantomJSExe = "phantomjs.exe";
+    static final String phantomJSPath = phantomJSDir+"\\bin\\"+phantomJSExe;
+    static final String phantomJSScriptPath = phantomJSDir+"\\examples\\rasterize.js";
+    static final String phantomJSViewport = "1024px*678px";
+    static final String tempPath = "d:\\temp"; // File temporaneo per salvare le immagini
+    static final String tempFile = "\\speddial_thumbnail.png"; // File temporaneo per salvare le immagini
+    
+    
+    // Variabili accedibili da tutti
     public static final int PROCESSWAITSECODS = 60;
     public static final int ERROR = 1;
     public static final int OK = 0;
