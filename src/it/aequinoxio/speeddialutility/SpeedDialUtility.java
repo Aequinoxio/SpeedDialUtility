@@ -6,6 +6,8 @@
 package it.aequinoxio.speeddialutility;
 
 import Utilities.CustomPreferences;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeSupport;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,17 +16,20 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.JTextArea;
+import javax.swing.SwingWorker;
 
 /**
  *
  * @author utente
  */
-public class SpeedDialUtility {
+public class SpeedDialUtility extends SwingWorker<String, String> implements WorkerCallback {
 
     // Constants constantValues = Constants.getInstance();
     //String pattern="\\((\\\".*?-\\d+)-(.*)\\\",(.*)\\)";S
@@ -41,67 +46,107 @@ public class SpeedDialUtility {
     Map<Integer, String> DBGROUPROWS;
     Map<Integer, String> DBGROUPTITLE;
     Map<Integer, SpeedDialGroupData> DBGROUP;
+    private final String SDFilename;
+    private final JTextArea textArea;
+    ThumbnailGenerator thumbnailGenerator;
+    private final UpdateDB updateDB;
+    PropertyChangeSupport pcs;
 
     /**
      * @param args the command line arguments
      */
-    // TODO: parametrizzare il path per il file pref.js
-    // TODO: salvare il thumbnail
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
-        SpeedDialUtility speedDialUtility = new SpeedDialUtility();
-        speedDialUtility.startImport(fileName);
+//    // TODO: parametrizzare il path per il file pref.js
+//    // TODO: salvare il thumbnail
+//    public static void main(String[] args) throws ClassNotFoundException, SQLException {
 //        SpeedDialUtility speedDialUtility = new SpeedDialUtility();
-//        speedDialUtility.readFromFile(fileName);
+//        speedDialUtility.startImport(fileName);
+////        SpeedDialUtility speedDialUtility = new SpeedDialUtility();
+////        speedDialUtility.readFromFile(fileName);
+////        try {
+////            speedDialUtility.printDB();
+////        } catch (SQLException | ClassNotFoundException ex) {
+////            Logger.getLogger(SpeedDialUtility.class.getName()).log(Level.SEVERE, null, ex);
+////        }
+////
+////        ThumbnailGenerator thumbnailGenerator;
+////        try {
+////            thumbnailGenerator = new ThumbnailGenerator(
+////                    "C:\\PortableApps\\phantomjs-2.1.1-windows",
+////                    Constants.DBPath,
+////                    Constants.phantomJSViewport,
+////                    "d:\\temp\\ttt.png"
+////            );
+////            thumbnailGenerator.grabAllThumbnail();
+////            thumbnailGenerator.closeDBConnection();
+////        } catch (ClassNotFoundException | SQLException | IOException | InterruptedException ex) {
+////            Logger.getLogger(SpeedDialUtility.class.getName()).log(Level.SEVERE, null, ex);
+////        }
+//    }
+    /**
+     *
+     * @return @throws ClassNotFoundException
+     * @throws SQLException
+     */
+    @Override
+    public String doInBackground() throws ClassNotFoundException, SQLException {
+        startImport();
+        return "Done!";
+    }
+
+    @Override
+    protected void done() {
+        super.done(); //To change body of generated methods, choose Tools | Templates.
 //        try {
-//            speedDialUtility.printDB();
-//        } catch (SQLException | ClassNotFoundException ex) {
-//            Logger.getLogger(SpeedDialUtility.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        ThumbnailGenerator thumbnailGenerator;
-//        try {
-//            thumbnailGenerator = new ThumbnailGenerator(
-//                    "C:\\PortableApps\\phantomjs-2.1.1-windows",
-//                    Constants.DBPath,
-//                    Constants.phantomJSViewport,
-//                    "d:\\temp\\ttt.png"
-//            );
-//            thumbnailGenerator.grabAllThumbnail();
 //            thumbnailGenerator.closeDBConnection();
-//        } catch (ClassNotFoundException | SQLException | IOException | InterruptedException ex) {
+//        } catch (SQLException ex) {
 //            Logger.getLogger(SpeedDialUtility.class.getName()).log(Level.SEVERE, null, ex);
 //        }
     }
 
-    public void startImport(String SDFilename) throws ClassNotFoundException, SQLException {
+    /**
+     *
+     * @param chunks
+     */
+    @Override
+    protected void process(List<String> chunks) {
+        for (String chunk : chunks) {
+            textArea.append(chunk + "\n");
+        }
+    }
+
+    private void startImport() throws ClassNotFoundException, SQLException {
+        setProgress(0);
         initializeDB();
         readFromFile(SDFilename);
-        try {
-            updateSpeedDialDB();
-        } catch (SQLException | ClassNotFoundException ex) {
-            Logger.getLogger(SpeedDialUtility.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        updateSpeedDialDB();
+        
+        updateDB.setUI(); // Schifezza. Meglio sarebbe usare un messaggio. COME FARE?
+        
+       // pcs.firePropertyChange("setStopButton", new Boolean(true),new Boolean(false));
+     
 
-        ThumbnailGenerator thumbnailGenerator;
         try {
             thumbnailGenerator = new ThumbnailGenerator(
+                    this,
                     null, //CustomPreferences.getInstance().getPhantomJSPath(), //"C:\\PortableApps\\phantomjs-2.1.1-windows",
                     null, //Constants.DBPath,
                     null, //Constants.phantomJSViewport,
                     null //"d:\\temp\\ttt.png"
             );
             thumbnailGenerator.grabAllThumbnail();
-            thumbnailGenerator.closeDBConnection();
-        } catch (ClassNotFoundException | SQLException | IOException | InterruptedException ex) {
+            //thumbnailGenerator.closeDBConnection();
+        } catch (ClassNotFoundException | SQLException | IOException ex) {
             Logger.getLogger(SpeedDialUtility.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     /**
      * Utility class for parsing the speeddial prefs.js in Mozilla user folder
+     *
+     * @param SDFilename
+     * @param textArea Textarea pre contenere il log delle attività svolte
      */
-    public SpeedDialUtility() {
+    public SpeedDialUtility(String SDFilename, JTextArea textArea, UpdateDB updateDB) {
         this.DBLABEL = new HashMap<>();
         this.DBURL = new HashMap<>();
         this.DB = new HashMap<>();
@@ -110,6 +155,10 @@ public class SpeedDialUtility {
         this.DBGROUPROWS = new HashMap<>();
         this.DBGROUPTITLE = new HashMap<>();
         this.DBGROUP = new HashMap<>();
+        this.SDFilename = SDFilename;
+        this.textArea = textArea;
+        this.updateDB = updateDB;
+        PropertyChangeSupport pcs = new PropertyChangeSupport(updateDB);
     }
 
     /**
@@ -118,10 +167,14 @@ public class SpeedDialUtility {
      * @throws java.sql.SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    private void updateSpeedDialDB() throws SQLException, ClassNotFoundException {
-        SQLliteUtils sqlLiteUtils = new SQLliteUtils(CustomPreferences.getInstance().getDBPath());
-        //sqlLiteUtils.startDBConnection("C:\\PortableApps\\SQLiteDatabaseBrowserPortable\\Data\\speeddial.db");
-        System.out.println("Total keys:" + DB.size());
+    private void updateSpeedDialDB() {
+        SQLliteUtils sqlLiteUtils = null;
+        try {
+            sqlLiteUtils = new SQLliteUtils(CustomPreferences.getInstance().getDBPath());
+
+            //sqlLiteUtils.startDBConnection("C:\\PortableApps\\SQLiteDatabaseBrowserPortable\\Data\\speeddial.db");
+            System.out.println("Total keys:" + DB.size());
+            publish("Total keys:" + DB.size());
 //        for (Integer key : DB.keySet()) {
 //            System.out.println(key);
 //            SpeedDialData sdu = DB.get(key);
@@ -130,41 +183,57 @@ public class SpeedDialUtility {
 
 //        Integer[] thumbsDBKeys;
 //        thumbsDBKeys = DB.keySet().toArray(new Integer[0]);
-        int thumbsInGroupFrom = 1;
-        int thumbsInGroupTo = 1;
-        for (Integer key : DBGROUP.keySet()) {
-            //System.out.println(key);
-            SpeedDialGroupData sdGD = DBGROUP.get(key);
-            thumbsInGroupTo += sdGD.rows * sdGD.columns;
-            System.out.println(String.format(
-                    "%s -> (%d,%d)", sdGD.title, sdGD.rows, sdGD.columns)
-            );
-            sqlLiteUtils.insertGroup(sdGD.title, sdGD.rows, sdGD.columns);
+            int thumbsInGroupFrom = 1;
+            int thumbsInGroupTo = 1;
+            for (Integer key : DBGROUP.keySet()) {
+                //System.out.println(key);
+                SpeedDialGroupData sdGD = DBGROUP.get(key);
+                thumbsInGroupTo += sdGD.rows * sdGD.columns;
+                System.out.println(String.format(
+                        "%s -> (%d,%d)", sdGD.title, sdGD.rows, sdGD.columns)
+                );
+                publish(String.format("%s -> (%d,%d)", sdGD.title, sdGD.rows, sdGD.columns));
 
-            for (int i = thumbsInGroupFrom; i < thumbsInGroupTo; i++) {
-                if (DB.containsKey(i)) {
-                    System.out.println(String.format("\t%d - %s -> %s - %s", i, sdGD.title, DB.get(i).label, DB.get(i).url));
-                    sqlLiteUtils.insertSite(DB.get(i).url, DB.get(i).label, null, sdGD.title);
+                sqlLiteUtils.insertGroup(sdGD.title, sdGD.rows, sdGD.columns);
+
+                for (int i = thumbsInGroupFrom; i < thumbsInGroupTo; i++) {
+                    if (DB.containsKey(i)) {
+                        System.out.println(String.format("\t%d - %s -> %s - %s", i, sdGD.title, DB.get(i).label, DB.get(i).url));
+                        publish(String.format("\t%d - %s -> %s - %s", i, sdGD.title, DB.get(i).label, DB.get(i).url));
+
+                        sqlLiteUtils.insertSite(DB.get(i).url, DB.get(i).label, null, sdGD.title);
+                    }
+                }
+                thumbsInGroupFrom = thumbsInGroupTo;
+            }
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(SpeedDialUtility.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (sqlLiteUtils != null) {
+                try {
+                    sqlLiteUtils.closeDBConnection();
+                } catch (SQLException ex) {
+                    Logger.getLogger(SpeedDialUtility.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            thumbsInGroupFrom = thumbsInGroupTo;
         }
-        sqlLiteUtils.closeDBConnection();
     }
 
     /**
      * Reset the SpeedDial Database recreating the empty tables
+     *
      * @throws ClassNotFoundException
-     * @throws SQLException 
+     * @throws SQLException
      */
-    private void initializeDB() throws ClassNotFoundException, SQLException{
+    private void initializeDB() throws ClassNotFoundException, SQLException {
         SQLliteUtils sqlLiteUtils = new SQLliteUtils(CustomPreferences.getInstance().getDBPath());
-        sqlLiteUtils.resetDB();         
+        sqlLiteUtils.resetDB();
         sqlLiteUtils.closeDBConnection();
     }
-    
+
     /**
-     * Read the speeddials prefs.js and generate a local DB that be imported with updateSpeedDialDB method
+     * Read the speeddials prefs.js and generate a local DB that be imported
+     * with updateSpeedDialDB method
      *
      * @param fileName The filename of the SpeedDial data to be read
      */
@@ -255,10 +324,25 @@ public class SpeedDialUtility {
         System.out.println(
                 String.format("Parsed: %d entries, %d thumbs in groups", counter, thumbsInGroupTot)
         );
+        publish(String.format("Parsed: %d entries, %d thumbs in groups", counter, thumbsInGroupTot));
+    }
+
+    @Override
+    public void updateWorker(String updateValues, int progress) {
+        publish(updateValues);
+        setProgress((int) (1.0 * progress / getMaxEntries() * 100.0));
+    }
+
+    public int getMaxEntries() {
+        return (DB.size());
+    }
+
+    public void shouldExit() {
+        thumbnailGenerator.shouldExit();
+        //this.cancel(true);
     }
 
     private static class SpeedDialData {
-
         SpeedDialData(String label, String url) {
             this.label = label;
             this.url = url;
