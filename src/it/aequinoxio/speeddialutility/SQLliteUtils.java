@@ -34,7 +34,7 @@ public class SQLliteUtils {
     //Constants constantValues = Constants.getInstance();
     private static final int SIZE = 1024;
     Connection DBConnection = null;
-    private static final String DROP_TABLE_SITES  = "DROP TABLE IF EXISTS sites";
+    private static final String DROP_TABLE_SITES = "DROP TABLE IF EXISTS sites";
     private static final String DROP_TABLE_GROUPS = "DROP TABLE IF EXISTS groups ";
     private static final String CREATE_TABLE_SITES = "CREATE TABLE sites ( `url` TEXT, `label` TEXT, `thumbnail` BLOB, `IDGroup` INTEGER, `ID` INTEGER, `last_update` TEXT DEFAULT CURRENT_TIMESTAMP, `update_status` INTEGER, PRIMARY KEY(ID) )";
     private static final String CREATE_TABLE_GROUPS = "CREATE TABLE groups ( `ID` INTEGER, `title` TEXT UNIQUE, `columns` INTEGER, `rows` INTEGER, `size` INTEGER, PRIMARY KEY(ID) )";
@@ -77,7 +77,7 @@ public class SQLliteUtils {
 
     public void resetDB() throws SQLException {
         PreparedStatement stmt;
-        
+
         // Cancello tutto
         stmt = DBConnection.prepareStatement(DROP_TABLE_SITES);
         stmt.executeUpdate();
@@ -316,7 +316,7 @@ public class SQLliteUtils {
             }
             baos.flush();
         }
-        //baos.toByteArray();
+
         // Update DB
         PreparedStatement stmt;
         String sql = "update sites set thumbnail = ?,last_update=datetime('now'), update_status=? where url = ?";
@@ -347,7 +347,7 @@ public class SQLliteUtils {
      * Cerca nel DB il sito corrispondente all'URL e ritorna un InputStream con
      * l'immagine corrispondente
      *
-     * @param url Url del sito da cercare
+     * @param ID ID (chiave) del sito da cercare
      * @return L'inputStream binario corrispondente all'immagine recuperata dal
      * DB. Ritorna null in caso di problemi
      * @throws SQLException
