@@ -22,6 +22,7 @@ public class CustomPreferences {
     private static final String PREF_PHANTOMJS_VIEWPORT = "PHANTOMJS_VIEWPORT";
     private static final String PREF_TEMP_FILE = "PREF_TEMP_FILE";
     private static final String PREF_TEMP_PATH = "PREF_TEMP_PATH";
+    private static final String LATEST_DB_PATH  ="LATEST_DB_PATH";
 
     private CustomPreferences() {
         prefs = Preferences.userRoot().node(this.getClass().getName());
@@ -86,5 +87,13 @@ public class CustomPreferences {
     
     public String getTempFileAbsolutePath() {
         return (prefs.get(PREF_TEMP_PATH, "")+prefs.get(PREF_TEMP_FILE, ""));
+    }
+    
+    public void setLatestFilePath(String filePath){
+        setPreference(LATEST_DB_PATH,filePath);
+    }
+    
+    public String getLatestFilePath(){
+        return prefs.get(LATEST_DB_PATH,null);
     }
 }
