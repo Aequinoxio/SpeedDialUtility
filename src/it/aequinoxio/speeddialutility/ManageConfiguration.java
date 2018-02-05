@@ -11,13 +11,15 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
  * @author utente
  */
-public class ManageConfiguration extends javax.swing.JFrame {
+public class ManageConfiguration extends javax.swing.JDialog {
 
     /**
      * Creates new form ShowConfiguration
@@ -52,8 +54,20 @@ public class ManageConfiguration extends javax.swing.JFrame {
         btnChangePJSScriptPath = new javax.swing.JButton();
         btnChangeViewPort = new javax.swing.JButton();
         btnInitDB = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
+        jPanel1 = new javax.swing.JPanel();
+        txtProxyPassword = new javax.swing.JPasswordField();
+        txtProxyAddress = new javax.swing.JTextField();
+        txtProxyUsername = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jCheckBox1 = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Gestisci configurazione");
+        setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+        setResizable(false);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -111,47 +125,139 @@ public class ManageConfiguration extends javax.swing.JFrame {
             }
         });
 
+        btnInitDB.setBackground(new java.awt.Color(255, 0, 0));
+        btnInitDB.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnInitDB.setText("Inizializza e rigenera Database");
+        btnInitDB.setEnabled(false);
         btnInitDB.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnInitDBActionPerformed(evt);
             }
         });
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("PhantomJS Proxy Settings"));
+
+        txtProxyPassword.setText("jPasswordField1");
+
+        txtProxyAddress.setText("http://");
+        txtProxyAddress.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtProxyAddressActionPerformed(evt);
+            }
+        });
+
+        txtProxyUsername.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtProxyUsernameActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel5.setText("Proxy");
+        jLabel5.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel6.setText("Username");
+        jLabel6.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel7.setText("Password");
+
+        jCheckBox1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jCheckBox1.setText("Usa proxy");
+        jCheckBox1.setHorizontalAlignment(javax.swing.SwingConstants.TRAILING);
+        jCheckBox1.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBox1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtProxyAddress))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(5, 5, 5)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtProxyUsername)
+                    .addComponent(txtProxyPassword)))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(36, 36, 36)
+                .addComponent(jCheckBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jCheckBox1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtProxyAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtProxyUsername))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtProxyPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblViewport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(lblScriptPath, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(7, 7, 7)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(lblPhantomJSPath, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
-                            .addComponent(lblDBPath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnChangePJSPath)
-                    .addComponent(btnChangeDBPath)
-                    .addComponent(btnChangePJSScriptPath)
-                    .addComponent(btnChangeViewPort))
-                .addGap(24, 24, 24))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(339, 339, 339)
+                .addGap(328, 328, 328)
                 .addComponent(btnInitDB)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jSeparator1)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addGap(7, 7, 7)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(lblPhantomJSPath, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE)
+                                            .addComponent(lblDBPath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(lblViewport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(lblScriptPath, javax.swing.GroupLayout.DEFAULT_SIZE, 648, Short.MAX_VALUE))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btnChangePJSPath)
+                                    .addComponent(btnChangeDBPath)
+                                    .addComponent(btnChangePJSScriptPath)
+                                    .addComponent(btnChangeViewPort))))
+                        .addGap(24, 24, 24))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -167,17 +273,20 @@ public class ManageConfiguration extends javax.swing.JFrame {
                     .addComponent(lblPhantomJSPath)
                     .addComponent(btnChangePJSPath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lblScriptPath)
-                        .addComponent(btnChangePJSScriptPath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblScriptPath)
+                    .addComponent(btnChangePJSScriptPath, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 25, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnChangeViewPort, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblViewport, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(btnInitDB)
                 .addContainerGap())
         );
@@ -199,28 +308,30 @@ public class ManageConfiguration extends javax.swing.JFrame {
     }//GEN-LAST:event_btnChangePJSPathActionPerformed
 
     private void btnInitDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInitDBActionPerformed
-        if (JOptionPane.showConfirmDialog(this, "Ripristino tutto?\nQuesto azzererà il DB corrente ed avvierà il parsing del file prefs.js\ned il downlo adelle immagini. Il processo può essere molto lungo.")
-                == JOptionPane.OK_OPTION) {
-            // TODO: ricaricare il DB
-            final JFileChooser fc = new JFileChooser();
-
-            if (fc.showDialog(this, "Apri il file prefs.js") == JFileChooser.APPROVE_OPTION) {
-                File file = fc.getSelectedFile();
-                //todo metterla nelle prefs e ricaricare il db
-                file.getAbsolutePath();
-                SpeedDialUtility sdu = new SpeedDialUtility();
-                try {
-                    sdu.startImport(file.getAbsolutePath());
-                } catch (ClassNotFoundException | SQLException ex) {
-                    Logger.getLogger(ManageConfiguration.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-            } else {
-                JOptionPane.showMessageDialog(this, "Annullato, nessuna modifica apportata al DB");
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Annullato, nessuna modifica apportata al DB");
-        }
+//        if (JOptionPane.showConfirmDialog(this, "Ripristino tutto?\nQuesto azzererà il DB corrente ed avvierà il parsing del file prefs.js\ned il downlo adelle immagini. Il processo può essere molto lungo.")
+//                == JOptionPane.OK_OPTION) {
+//            // TODO: ricaricare il DB
+//            final JFileChooser fc = new JFileChooser();
+//
+//            if (fc.showDialog(this, "Apri il file prefs.js") == JFileChooser.APPROVE_OPTION) {
+//                File file = fc.getSelectedFile();
+//                //todo metterla nelle prefs e ricaricare il db
+//                file.getAbsolutePath();
+//                SpeedDialUtility sdu = new SpeedDialUtility();
+//                try {
+//                    sdu.startImport(file.getAbsolutePath());
+//                    JOptionPane.showMessageDialog(this, "Finito");
+//                    // TODO: Ricaricare il tree
+//                } catch (ClassNotFoundException | SQLException ex) {
+//                    Logger.getLogger(ManageConfiguration.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//
+//            } else {
+//                JOptionPane.showMessageDialog(this, "Annullato, nessuna modifica apportata al DB");
+//            }
+//        } else {
+//            JOptionPane.showMessageDialog(null, "Annullato, nessuna modifica apportata al DB");
+//        }
     }//GEN-LAST:event_btnInitDBActionPerformed
 
     private void btnChangePJSScriptPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangePJSScriptPathActionPerformed
@@ -228,8 +339,23 @@ public class ManageConfiguration extends javax.swing.JFrame {
     }//GEN-LAST:event_btnChangePJSScriptPathActionPerformed
 
     private void btnChangeViewPortActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChangeViewPortActionPerformed
-        JOptionPane.showMessageDialog(this, "Non implementato");
+       // JOptionPane.showMessageDialog(this, "Non implementato");
+        ViewPortChooser viewPortChooser = new ViewPortChooser(null, true);
+        viewPortChooser.setLocationRelativeTo(this);
+        viewPortChooser.setVisible(true);
     }//GEN-LAST:event_btnChangeViewPortActionPerformed
+
+    private void txtProxyAddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProxyAddressActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProxyAddressActionPerformed
+
+    private void txtProxyUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProxyUsernameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtProxyUsernameActionPerformed
+
+    private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jCheckBox1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -273,13 +399,22 @@ public class ManageConfiguration extends javax.swing.JFrame {
     private javax.swing.JButton btnChangePJSScriptPath;
     private javax.swing.JButton btnChangeViewPort;
     private javax.swing.JButton btnInitDB;
+    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lblDBPath;
     private javax.swing.JLabel lblPhantomJSPath;
     private javax.swing.JLabel lblScriptPath;
     private javax.swing.JLabel lblViewport;
+    private javax.swing.JTextField txtProxyAddress;
+    private javax.swing.JPasswordField txtProxyPassword;
+    private javax.swing.JTextField txtProxyUsername;
     // End of variables declaration//GEN-END:variables
 }
